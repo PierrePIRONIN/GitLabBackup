@@ -10,7 +10,7 @@
 ## Scheduling
 Here is a simple scheduling crontab's entry. The backup will be triggered every Sunday at 2:00 AM.
 ```
-2 0 * * 0 python backup-gitlab.py https://<MY_IP_SERVER> <MY_GITLAB_PRIVATE_TOKEN> --ssh_port <CLONE_SSH_PORT> --backup_dir <MY_BACKUP_DIR> > <MY_BACKUP_DIR>/log 2>&1
+2 0 * * 0 cd MY_BACKUP_DIR; python GitLabBackup.py https://<MY_IP_SERVER> <MY_GITLAB_PRIVATE_TOKEN> --ssh_port <CLONE_SSH_PORT> > ./log 2>&1
 ```
 
 ## License

@@ -1,0 +1,7 @@
+{
+  "from": "backup@my.domain.com",
+  "to": "me@gmail.com",
+  "smtp_url": "my_provider_smtp_url",
+  "smtp_login": "backup@my.domain.com",
+  "smtp_password": "MY_SECRET_SMTP_PASSWORD"
+}
