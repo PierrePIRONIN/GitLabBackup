@@ -59,7 +59,7 @@ In addition of this mandatory fields, you could customize the following ones (th
 ## Scheduling
 Here is a simple scheduling crontab's entry. The backup will be triggered every Sunday at 2:00 AM.
 ``` crontab
-2 0 * * 0 cd MY_BACKUP_DIR; python GitLabBackup.py <MY_GITLAB_SERVER_URL> <MY_GITLAB_PRIVATE_TOKEN> > ./log 2>&1
+0 2 * * 0 cd MY_BACKUP_DIR; python GitLabBackup.py <MY_GITLAB_SERVER_URL> <MY_GITLAB_PRIVATE_TOKEN> > ./log 2>&1
 ```
 
 Enjoy ! ;)
