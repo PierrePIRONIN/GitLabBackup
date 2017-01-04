@@ -20,12 +20,6 @@ parser.add_argument("--backup_dir", help="the directory where repositories will 
 parser.add_argument("--config_email", help="the configuration file (.json) for email notification (default ./config_email.json)")
 args = parser.parse_args()
 
-# Request GitLab API to retrieve projects
-gitlab_url = args.url + "/api/v3/projects?private_token=" + args.token
-r = requests.get(gitlab_url, verify=False)
-if r.status_code != 200:
-    r.raise_for_status()
-
 # Make the backup repositories directory
 backup_directory = "./repos_backup"
 if args.backup_dir:
@@ -38,19 +32,33 @@ except OSError as e:
     else:
         raise
 
-# Iterate on projects and clone them in mirror mode or update them if already exist
-projects = r.json()
-for project in projects:
-    url = project["ssh_url_to_repo"]
-    if args.ssh_port:
-        url = "ssh://" + url.replace(":", ":" + args.ssh_port + "/")
-    localPath = backup_directory + "/" + project["path"] + ".git"
-    if not os.path.exists(localPath):
-        print("Create backup for " + localPath)
-        os.system("git clone --mirror " + url + " " + localPath)
-    else:
-        print("Update backup for " + localPath)
-        os.system("cd " + localPath + "; git remote update")
+page = 1
+
+while True:
+    # Request GitLab API to retrieve projects
+    gitlab_url = args.url + "/api/v3/projects?page=" + str(page) + "&private_token=" + args.token
+    r = requests.get(gitlab_url, verify=False)
+    if r.status_code != 200:
+        r.raise_for_status()
+
+    # Iterate on projects and clone them in mirror mode or update them if already exist
+    projects = r.json()
+    for project in projects:
+        url = project["ssh_url_to_repo"]
+        if args.ssh_port:
+            url = "ssh://" + url.replace(":", ":" + args.ssh_port + "/")
+        localPath = backup_directory + "/" + project["path"] + ".git"
+        if not os.path.exists(localPath):
+            print("Create backup for " + localPath)
+            os.system("git clone --mirror " + url + " " + localPath)
+        else:
+            print("Update backup for " + localPath)
+            os.system("cd " + localPath + "; git remote update")
+
+    try:
+        page = int(r.headers['X-Next-Page'])
+    except:
+        break
 
 # Send mail if enabled
 configEmailFilename = args.config_email
